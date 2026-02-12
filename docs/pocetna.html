@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restoran</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+ 
+ <style>
+    :root{
+      --bg: #070707;
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.62);
+      --line: rgba(255,255,255,0.12);
+
+      --accent: #f2c94c;
+      --accentText: #0b0b0b;
+
+      --radius: 24px;
+      --max: 1180px;
+      --headerH: 74px;
+
+      --brandFont: "Bodoni Moda", serif;
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
+
+    /* =========================
+       Floating background plates
+       ========================= */
+    .bg-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events:none;
+    overflow:hidden;
+    }
+
+    .bg-layer .plate{
+    position:absolute;
+    will-change: transform;
+    transform: translate3d(0,0,0);
+    }
+
+    .plate.p1{
+      top: 120px;
+      right: -160px;
+      width: min(640px, 56vw);
+      rotate: -12deg;
+      opacity: 0.2;
+      animation: float1 40s ease-in-out infinite;
+    }
+    .plate.p2{
+      bottom: 120px;
+      left: 10px;
+      width: min(640px, 56vw);
+      rotate: 10deg;
+      opacity: 0.2;
+      animation: float2 40s ease-in-out infinite;
+    }
+    @keyframes float1{
+      0%{ transform: translate(0,0); }
+      30%{ transform: translate(-100px, 100px); }
+      70%{ transform: translate(-400px,-200px); }
+      100%{ transform: translate(0,0); }
+    }
+    @keyframes float2{
+      0%{ transform: translate(0,0); }
+      30%{ transform: translate(150px, 150px); }
+      70%{ transform: translate(200px,200px); }
+      100%{ transform: translate(0,0); }
+    }
+    /* =========================
+       Global sticky header
+       ========================= */
+    .site-header{
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--headerH);
+      z-index: 1000;
+      display:flex;
+      align-items:center;
+      background: rgba(10,10,10,0.62);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .site-header::before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0;
+      height: 6px;
+      background: var(--accent);
+    }
+    .container{
+      width: min(var(--max), calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+    .header-inner{
+      width: 100%;
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items:center;
+      gap: 12px;
+    }
+    .brand{
+      justify-self: center;
+      font-family: "Dancing Script", cursive;
+      font-optical-sizing: auto;
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    .menu-wrap{ justify-self:end; position: relative; }
+    .hamburger{
+      width: 44px; height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.30);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+    .ham-lines{
+      width: 18px; height: 12px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .ham-lines span{
+      height:2px;
+      background: rgba(255,255,255,0.86);
+      border-radius:2px;
+      display:block;
+    }
+    .dropdown{
+      position:absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 260px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(16,16,16,0.94);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.70);
+      overflow:hidden;
+      display:none;
+      z-index: 2000;
+    }
+    .dropdown.open{ display:block; }
+    .dropdown a{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 14px 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.88);
+      background: rgba(0,0,0,0.18);
+      cursor:pointer;
+      user-select:none;
+    }
+    .dropdown a:first-child{ border-top:0; }
+    .dropdown a:hover{ background: rgba(255,255,255,0.06); }
+    .chev{ opacity:.7; }
+
+    /* =========================
+       Cards layout (4 cards)
+       ========================= */
+    .page{
+      position: relative;
+      z-index: 1;
+      padding-top: calc(var(--headerH) + 26px);
+      padding-bottom: 60px;
+      display:flex;
+      flex-direction: column;
+      gap: 34px; /* space between cards */
+      align-items: center;
+    }
+
+    .section-card{
+      width: min(var(--max), calc(100vw - 28px));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(16,16,16,0.78);
+      box-shadow: 0 40px 120px rgba(0,0,0,0.65);
+      position: relative;
+      scroll-margin-top: calc(var(--headerH) + 18px);
+    }
+
+    /* subtle ambient in each card */
+    .section-card::before{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      background: linear-gradient(180deg, rgba(8,8,8,0.86), rgba(8,8,8,0.96));
+      filter: blur(16px);
+      opacity: 0.22;
+      transform: scale(1.06);
+      z-index: 0;
+    }
+    .section-card > *{ position: relative; z-index: 1; }
+
+    .section-inner{
+      padding: 92px 0;
+    }
+    .section-inner .container{
+      width: 100%;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+
+    /* Fullscreen cards (home, about) */
+    .section-card.fullscreen .section-inner{
+      min-height: calc(100vh - var(--headerH) - 26px);
+      display:grid;
+      align-items:center;
+      padding: 0;
+    }
+
+    /* Background image block */
+    .hero-bg{
+      position: relative;
+      min-height: calc(100vh - var(--headerH) - 26px);
+      display:grid;
+      align-items:center;
+      padding: 90px 0;
+    }
+    .hero-bg::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.62)),
+        var(--bgimg);
+
+    /* "udalji" i učini oštrije: */
+    background-size: 100% auto;     /* manje “zoom” nego cover */
+    background-position: 18% center; /* malo pomakni ulijevo (po želji) */
+    background-repeat: no-repeat;
+
+    z-index:0;
+    }
+
+    .hero-bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(900px 600px at 30% 35%, rgba(255,255,255,0.06), transparent 60%);
+      z-index:0;
+    }
+    .hero-bg > .container{ position:relative; z-index:1; }
+
+    /* Typography */
+    h1,h2{ font-family:"Playfair Display", serif; margin:0; }
+    .hero-title{
+      font-family: "Dancing Script", cursive;
+      font-optical-sizing: auto;
+      font-weight: 600;
+      font-style: normal;
+      text-align:center;
+      font-size: clamp(62px, 7vw, 104px);
+      letter-spacing: 0.6px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .hero-sub{
+      text-align:center;
+      color: rgba(255,255,255,0.72);
+      max-width: 64ch;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .section-head{ margin-bottom: 16px; }
+    .section-head h2{
+      font-size: 34px;
+      margin-bottom: 8px;
+      text-align:center;
+    }
+    .section-head p{
+      margin:0;
+      color: var(--muted);
+      max-width: 70ch;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    /* About centered */
+    .about-center{
+      max-width: 860px;
+      margin: 0 auto;
+      text-align:center;
+    }
+    .about-center h2{
+      font-size: 44px;
+      margin: 0 0 10px;
+    }
+    .about-center .lead{
+      margin: 0 0 18px;
+      color: rgba(255,255,255,0.70);
+      line-height: 1.7;
+    }
+    .about-center .text{
+      color: rgba(255,255,255,0.78);
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    /* =========================
+       MENU (center list only)
+       ========================= */
+    .menu-wrap2{
+      display:flex;
+      justify-content:center;
+    }
+    .menu-panel{
+      width: min(760px, 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .menu-cat-title{
+      font-family:"Playfair Display", serif;
+      font-size: 26px;
+      margin: 10px 6px 12px;
+    }
+    .item{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      padding: 12px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+      cursor:pointer;
+      margin-bottom: 10px;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .item:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.05); }
+   
+    .item-img{
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      overflow: hidden;
+
+      display: grid;
+      place-items: center;   /* centriraj sadržaj */
+    }
+
+    .item-img img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;     /* popuni kvadrat, odreže višak */
+      display: block;
+      transform: none;       /* makni onaj translateY(4px) ako ga imaš */
+    }
+
+    .item p{
+      margin: 0;
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* =========================
+       CONTACT + RESERVE
+       ========================= */
+    .contact-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .contact-item{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .contact-item h3{
+      font-family:"Playfair Display", serif;
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+    .line{ color: rgba(255,255,255,0.72); margin: 6px 0; }
+    .socials{ display:flex; gap:10px; margin-top: 10px; }
+    .icon{
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.22);
+      display:grid;
+      place-items:center;
+      color: rgba(255,255,255,0.80);
+      transition: transform .15s ease, background .15s ease;
+    }
+    .icon:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.06); }
+    .icon svg{ width: 18px; height: 18px; }
+
+    .reserve-cta{ display:flex; justify-content:center; margin-top: 22px; }
+    .btn-primary{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.25);
+      padding: 12px 18px;
+      font-size: 14px;
+      color: var(--accentText);
+      background: var(--accent);
+      font-weight: 500;
+      cursor:pointer;
+      text-decoration:none;
+    }
+
+    .tabs{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap:20px;
+  padding: 6px;
+
+  margin: 6px 6px 18px;
+
+}
+
+.tab-btn{
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.80);
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background .15s ease, transform .15s ease, color .15s ease;
+}
+.tab-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.06); }
+
+.tab-btn.is-active{
+  background: var(--accent);
+  color: var(--accentText);
+  border-color: rgba(0,0,0,0.25);
+}
+
+.hidden{ display: none !important; }
+
+    /* =========================
+       Modal (dish details)
+       ========================= */
+    .modal{
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      background: rgba(0,0,0,0.70);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+    }
+    .modal.open{ display:flex; }
+    .modal-card{
+      width: min(860px, calc(100vw - 32px));
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(16,16,16,0.92);
+      border-radius: 22px;
+      overflow:hidden;
+      box-shadow: 0 30px 140px rgba(0,0,0,0.75);
+    }
+    .modal-top{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .modal-top h3{
+      font-family:"Playfair Display", serif;
+      margin: 0;
+      font-size: 22px;
+    }
+    .close{
+      width: 40px; height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.25);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      color: rgba(255,255,255,0.88);
+    }
+    .modal-body{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 14px;
+    }
+    .photo{
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      overflow:hidden;
+      min-height: 260px;
+      position: relative;
+    }
+    .photo img{ width:100%; height:100%; object-fit:cover; display:block; opacity:.95; }
+    .boxes{ display:grid; gap: 12px; }
+    .box{
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      padding: 14px;
+    }
+    .box h4{
+      margin: 0 0 8px;
+      font-size: 13px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.70);
+    }
+    .box ul, .box ol{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    /* Footer */
+    footer{
+      width: min(var(--max), calc(100vw - 28px));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,0.22);
+      padding: 18px 0;
+      color: var(--muted);
+      font-size: 13px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.45);
+    }
+    .footer-row{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 980px){
+      .contact-grid{ grid-template-columns: 1fr; }
+      .modal-body{ grid-template-columns: 1fr; }
+      .dropdown{ width: 220px; }
+      .about-center h2{ font-size: 38px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- floating bg -->
+  <div class="bg-layer" aria-hidden="true">
+    <img class="plate p1" src="assets/ramen_bowl.webp" alt="">
+    <img class="plate p2" src="assets/ramen_bowl.webp" alt="">
+  </div>
+
+  <!-- sticky header -->
+  <div class="site-header">
+    <div class="container header-inner">
+      <div></div>
+      <a class="brand" href="#home">Moxiecph</a>
+
+      <div class="menu-wrap">
+        <button class="hamburger" id="menuBtn" aria-label="Izbornik" aria-expanded="false">
+          <span class="ham-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+
+        <nav class="dropdown" id="dropdown" aria-label="Navigacija">
+          <a href="#home" class="dd">Početna <span class="chev">→</span></a>
+          <a href="#about" class="dd">O nama <span class="chev">→</span></a>
+          <a href="#menu" class="dd">Menu <span class="chev">→</span></a>
+          <a href="#contact" class="dd">Kontakt/Rezervacija <span class="chev">→</span></a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 cards -->
+  <div class="page">
+
+    <!-- CARD 1: HOME fullscreen + image -->
+    <section class="section-card fullscreen" id="home">
+      <div class="section-inner hero-bg" style="--bgimg:url('assets/redcock.jpg')">
+        <div class="container">
+          <h1 class="hero-title">Moxiecph</h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 2: ABOUT fullscreen + image + centered -->
+    <section class="section-card fullscreen" id="about">
+      <div class="section-inner hero-bg" style="--bgimg:url('assets/naturecock.jpg')">
+        <div class="container">
+          <div class="about-center">
+            <h2>O nama</h2>
+            <p class="lead">Prostor gdje se večera pretvara u doživljaj — tiho, elegantno i promišljeno.</p>
+            <div class="text">
+              U našem restoranu naglasak je na sezonskim namirnicama, jednostavnim tehnikama i preciznom servisu.
+              Jelovnik se mijenja kroz godinu, a svaka večer je složena tako da ima ritam: od prvog zalogaja do zadnje note.
+              <br><br>
+              Ovdje kasnije dodaš priču o chef-u, filozofiji kuhinje i preporuke.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 3: MENU -->
+    <section class="section-card" id="menu">
+      <div class="section-inner">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <h2>Menu</h2>
+               </div>
+          </div>
+
+          <div class="menu-wrap2">
+            <div class="menu-panel">
+              <div class="tabs">
+                <button class="tab-btn is-active" data-tab="food" type="button">Food</button>
+                <button class="tab-btn" data-tab="drinks" type="button">Drinks</button>
+              </div>
+
+              <div id="tab-food">
+  <!-- OVDJE OSTAVI POSTOJEĆI FOOD MENI (Juhe / Glavna jela / Deserti) -->
+                 <div class="menu-cat-title">Juhe</div>
+              <div class="item" data-type="dish" data-id="soup1">
+                <div class="item-img"><img src="assets/juha-povrce.jpg" alt=""></div>
+                <div>
+                  <h4>Krem juha od povrća</h4>
+                  <p>Lagano, sezonski, citrusni završetak.</p>
+                </div>
+              </div>
+              <div class="item" data-type="dish" data-id="soup2">
+                <div class="item-img"><img src="assets/juha-bundeva.jpeg" alt=""></div>
+                <div>
+                  <h4>Juha od bundeve</h4>
+                  <p>Kremasta tekstura, tostirane sjemenke.</p>
+                </div>
+              </div>
+
+              <div class="menu-cat-title" style="margin-top:18px;">Glavna jela</div>
+              <div class="item" data-type="dish" data-id="main1">
+                <div class="item-img"><img src="assets/pulled-pork.jpg" alt=""></div>
+                <div>
+                  <h4>Sporo pečeno meso</h4>
+                  <p>Umak od temeljca, sezonski prilog.</p>
+                </div>
+              </div>
+              <div class="item" data-type="dish" data-id="main2">
+                <div class="item-img"><img src="assets/riba.jpg" alt=""></div>
+                <div>
+                  <h4>Riblji file</h4>
+                  <p>Maslac-limun, povrće na žaru.</p>
+                </div>
+              </div>
+
+              <div class="menu-cat-title" style="margin-top:18px;">Deserti</div>
+              <div class="item" data-type="dish" data-id="dessert1">
+                <div class="item-img"><img src="assets/kreme_vocna.jpg" alt=""></div>
+                <div>
+                  <h4>Voće &amp; krema</h4>
+                  <p>Lagano, svježe, hrskavi element.</p>
+                </div>
+              </div>
+              <div class="item" data-type="dish" data-id="dessert2">
+                <div class="item-img"><img src="assets/coko-mus.jpg" alt=""></div>
+                <div>
+                  <h4>Čokoladni mousse</h4>
+                  <p>Dubok okus, malo soli, crumble.</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="tab-drinks" class="hidden">
+              <!-- DRINKS ponuda -->
+              <div class="menu-cat-title">Kokteli</div>
+
+              <div class="item" data-type="drink" data-id="drink1">
+                <div class="item-img"><img src="assets/smoked-negroni.jpg" alt=""></div>
+                <div>
+                  <h4>Negroni</h4>
+                  <p>Gin, vermut, Campari — balansirano gorko.</p>
+                </div>
+              </div>
+
+              <div class="item" data-type="drink" data-id="drink2">
+                <div class="item-img"><img src="assets/whiskey-sour.jpg" alt=""></div>
+                <div>
+                  <h4>Whiskey Sour</h4>
+                  <p>Whiskey, limun, šećer — svježe i kremasto.</p>
+                </div>
+              </div>
+
+              <div class="menu-cat-title" style="margin-top:18px;">Vina</div>
+
+              <div class="item" data-type="drink" data-id="drink3">
+                <div class="item-img"><img src="assets/chardonnay.jpg" alt=""></div>
+                <div>
+                  <h4>Chardonnay (0.15)</h4>
+                  <p>Suho, voćno, lagani hrast.</p>
+                </div>
+              </div>
+
+              <div class="item" data-type="drink" data-id="drink4">
+                <div class="item-img"><img src="assets/vino.jpg" alt=""></div>
+                <div>
+                  <h4>Plavac Mali (0.15)</h4>
+                  <p>Puno tijelo, tamno voće, začini.</p>
+                </div>
+              </div>
+            </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 4: CONTACT + RESERVE -->
+    <section class="section-card" id="contact">
+      <div class="section-inner">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <h2>Kontakt</h2>
+              <p>Kontakt i rezervacija kao jedna cjelina.</p>
+            </div>
+          </div>
+
+          <div class="contact-grid">
+            <div class="contact-item">
+              <h3>Informacije</h3>
+              <div class="line">📍 Ul. Primjera 1, Zagreb</div>
+              <div class="line">📞 +385 91 123 4567</div>
+              <div class="line">✉️ restoran@example.com</div>
+            </div>
+
+            <div class="contact-item">
+              <h3>Društvene mreže</h3>
+              <div class="socials">
+                <a class="icon" href="#" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.7"/>
+                    <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.7"/>
+                    <path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                  </svg>
+                </a>
+                <a class="icon" href="#" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M14 8h3V5h-3a4 4 0 0 0-4 4v3H7v3h3v7h3v-7h3l1-3h-4V9a1 1 0 0 1 1-1Z" fill="currentColor"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="reserve-cta">
+            <a class="btn-primary" href="reservation.html">Rezerviraj stol</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer as separate card -->
+    <footer>
+      <div class="container">
+        <div class="footer-row">
+          <div>© 2026 Restoran</div>
+          <div style="opacity:.85;">Minimal • Elegant • Sezonski</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Dish modal -->
+  <div class="modal" id="dishModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Jelo">
+      <div class="modal-top">
+        <h3 id="dishTitle">Jelo</h3>
+        <button class="close" id="closeDish" aria-label="Zatvori">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="photo">
+          <img id="dishPhoto" src="assets/cocktail.jpg" alt="">
+        </div>
+        <div class="boxes">
+          <div class="box" id="drinkDescBox" style="display:none;">
+            <h4>Opis</h4>
+            <div id="drinkDesc" style="color: rgba(255,255,255,0.78); line-height:1.7; font-size:14px;"></div>
+          </div>
+          <div class="box">
+            <h4>Sastojci</h4>
+            <ul id="dishIngredients"></ul>
+          </div>
+          <div class="box">
+            <h4>Priprema</h4>
+            <ol id="dishSteps"></ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Dropdown hamburger (clickable) =====
+    const menuBtn = document.getElementById('menuBtn');
+    const dropdown = document.getElementById('dropdown');
+
+    function setDropdown(open){
+      dropdown.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    menuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDropdown(!dropdown.classList.contains('open'));
+    });
+
+    document.addEventListener('click', (e) => {
+      const clickedInside = dropdown.contains(e.target) || menuBtn.contains(e.target);
+      if (!clickedInside) setDropdown(false);
+    });
+
+    document.querySelectorAll('.dd').forEach(a => {
+      a.addEventListener('click', () => setDropdown(false));
+    });
+
+    // ===== Dish modal data (extend easily) =====
+    const dishes = {
+      soup1: {
+        title: "Krem juha od povrća",
+        photo: "assets/juha-povrce.jpg",
+        ingredients: ["1 luk", "Sezonsko povrće", "Povrtni temeljac", "Maslinovo ulje", "Sol, papar", "Limunova korica"],
+        steps: ["Sotiraj luk 3–4 min.", "Dodaj povrće i temeljac.", "Kuhaj 20–25 min.", "Izmiksaj u kremu.", "Začini i posluži."]
+      },
+      soup2: {
+        title: "Juha od bundeve",
+        photo: "assets/juha-bundeva.jpeg",
+        ingredients: ["Bundeva", "Luk", "Temeljac", "Kiselo vrhnje", "Sjemenke", "Začini"],
+        steps: ["Zapeći bundevu.", "Skuhaj s temeljcem.", "Izmiksaj.", "Dodaj vrhnje.", "Posipaj sjemenkama."]
+      },
+      main1: {
+        title: "Sporo pečeno meso",
+        photo: "assets/pulled-pork.jpg",
+        ingredients: ["Meso", "Timijan", "Sol, papar", "Umak (temeljac)", "Sezonski prilog"],
+        steps: ["Začini i zapeci.", "Peci na 160°C 45–60 min.", "Pripremi prilog.", "Reduciraj umak.", "Serviraj."]
+      },
+      main2: {
+        title: "Riblji file",
+        photo: "assets/riba.jpg",
+        ingredients: ["Riblji file", "Maslac", "Limun", "Povrće", "Sol, papar"],
+        steps: ["Začini ribu.", "Zapeći s maslacem.", "Dodaj limun.", "Povrće na žaru.", "Spoji i posluži."]
+      },
+      dessert1: {
+        title: "Voće & krema",
+        photo: "assets/kreme_vocna.jpg",
+        ingredients: ["Voće", "Krema", "Keks/tuile", "Citrus", "Šećer u prahu"],
+        steps: ["Pripremi kremu.", "Mariniraj voće.", "Složi slojeve.", "Dovrši prah šećer.", "Serviraj."]
+      },
+      dessert2: {
+        title: "Čokoladni mousse",
+        photo: "assets/coko-mus.jpg",
+        ingredients: ["Tamna čokolada", "Vrhnje", "Jaje", "Prstohvat soli", "Crumble"],
+        steps: ["Otopi čokoladu.", "Umuti vrhnje.", "Spoji i ohladi.", "Dodaj crumble.", "Posluži hladno."]
+      },
+    };
+    const drinks = {
+      drink1: {
+        title: "Negroni",
+        photo: "assets/smoked-negroni.jpg",
+        description: "Gin, Campari i slatki vermut — gorko-slatki klasik."
+      },
+      drink2: {
+        title: "Whiskey Sour",
+        photo: "assets/whiskey-sour.jpg",
+        description: "Whiskey, limun i šećerni sirup — svježe i balansirano."
+      },
+      drink3: {
+        title: "Chardonnay (0.15)",
+        photo: "assets/chardonnay.jpg",
+        description: "Suho bijelo vino, voćno, idealno uz ribu i tjesteninu."
+      },
+      drink4: {
+        title: "Plavac Mali (0.15)",
+        photo: "assets/vino.jpg",
+        description: "Crno vino punog tijela, tamno voće i začini."
+      },
+    };
+
+    // ===== Modal open/close =====
+    const dishModal = document.getElementById('dishModal');
+    const closeDish = document.getElementById('closeDish');
+    const dishTitle = document.getElementById('dishTitle');
+    const dishPhoto = document.getElementById('dishPhoto');
+    const dishIngredients = document.getElementById('dishIngredients');
+    const dishSteps = document.getElementById('dishSteps');
+    const drinkDescBox = document.getElementById('drinkDescBox');
+    const drinkDesc = document.getElementById('drinkDesc');
+
+
+    function openDish(key){
+      const d = dishes[key];
+      if (!d) return;
+
+      dishTitle.textContent = d.title || "Detalji";
+      dishPhoto.src = d.photo || "assets/cocktail.jpeg";
+
+      // ako nema ingredients/steps, sakrij sekcije
+      const ing = Array.isArray(d.ingredients) ? d.ingredients : [];
+      const stp = Array.isArray(d.steps) ? d.steps : [];
+
+      dishIngredients.innerHTML = ing.map(x => `<li>${x}</li>`).join('');
+      dishSteps.innerHTML = stp.map(x => `<li>${x}</li>`).join('');
+
+      // sakrij box ako je prazan
+      const ingBox = dishIngredients.closest('.box');
+      const stpBox = dishSteps.closest('.box');
+
+      if (ingBox) ingBox.style.display = ing.length ? '' : 'none';
+      if (stpBox) stpBox.style.display = stp.length ? '' : 'none';
+
+      dishModal.classList.add('open');
+      dishModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDishModal(){
+      dishModal.classList.remove('open');
+      dishModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function openDish(id){
+
+      const d = dishes[id];
+      if (!d) return;
+
+      dishTitle.textContent = d.title;
+      dishPhoto.src = d.photo || "assets/plate1.png";
+
+      // prikaz FOOD layouta
+      drinkDescBox.style.display = "none";
+
+      dishIngredients.closest('.box').style.display = "";
+      dishSteps.closest('.box').style.display = "";
+
+      dishIngredients.innerHTML = d.ingredients.map(x => `<li>${x}</li>`).join('');
+      dishSteps.innerHTML = d.steps.map(x => `<li>${x}</li>`).join('');
+
+      dishModal.classList.add('open');
+      dishModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function openDrink(id){
+
+      const d = drinks[id];
+      if (!d) return;
+
+      dishTitle.textContent = d.title;
+      dishPhoto.src = d.photo || "assets/cocktail.jpeg";
+
+      // prikaz DRINK layouta (samo slika + opis)
+      drinkDescBox.style.display = "";
+      drinkDesc.textContent = d.description || "";
+
+      dishIngredients.closest('.box').style.display = "none";
+      dishSteps.closest('.box').style.display = "none";
+
+      dishModal.classList.add('open');
+      dishModal.setAttribute('aria-hidden', 'false');
+    }
+
+
+document.addEventListener('click', (e) => {
+  const item = e.target.closest('.item');
+  if (!item) return;
+
+  const type = item.dataset.type; // "dish" ili "drink"
+  const id = item.dataset.id;
+
+  if (type === "dish") openDish(id);
+  if (type === "drink") openDrink(id);
+});
+
+
+    closeDish.addEventListener('click', closeDishModal);
+    dishModal.addEventListener('click', (e) => { if (e.target === dishModal) closeDishModal(); });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        setDropdown(false);
+        if (dishModal.classList.contains('open')) closeDishModal();
+      }
+    });
+
+        // ===== Menu tabs: Food / Drinks =====
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabFood = document.getElementById('tab-food');
+    const tabDrinks = document.getElementById('tab-drinks');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const which = btn.dataset.tab;
+
+        tabButtons.forEach(b => b.classList.toggle('is-active', b === btn));
+
+        const showFood = which === 'food';
+        tabFood.classList.toggle('hidden', !showFood);
+        tabDrinks.classList.toggle('hidden', showFood);
+      });
+    });
+
+  </script>
+
+  <script>
+  // ===== Floating plates bounce animation =====
+  (function(){
+    const plates = [
+      { el: document.getElementById('plate1'), x: 0, y: 0, vx: -0.18, vy: 0.14 },
+      { el: document.getElementById('plate2'), x: 0, y: 0, vx: 0.16, vy: -0.12 },
+    ].filter(p => p.el);
+
+    if (plates.length === 0) return;
+
+    // start positions based on current CSS layout
+    function init(){
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+
+      plates.forEach((p, i) => {
+        // random-ish start inside viewport
+        p.x = (i === 0) ? W - 480 : 80;
+        p.y = (i === 0) ? 120 : H - 520;
+
+        // apply immediately
+        p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+      });
+    }
+
+    // get element size (after image loads)
+    function size(el){
+      const r = el.getBoundingClientRect();
+      return { w: r.width, h: r.height };
+    }
+
+    let last = performance.now();
+
+    function tick(now){
+      const dt = Math.min(32, now - last); // clamp
+      last = now;
+
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+
+      plates.forEach(p => {
+        const { w, h } = size(p.el);
+
+        // move (speed scaled by dt so it's consistent)
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+
+        // bounce against edges
+        if (p.x <= -w * 0.35) { p.x = -w * 0.35; p.vx *= -1; }
+        if (p.y <= -h * 0.35) { p.y = -h * 0.35; p.vy *= -1; }
+        if (p.x >= W - w * 0.65) { p.x = W - w * 0.65; p.vx *= -1; }
+        if (p.y >= H - h * 0.65) { p.y = H - h * 0.65; p.vy *= -1; }
+
+        p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+      });
+
+      requestAnimationFrame(tick);
+    }
+
+    // wait images to load so sizes are correct
+    let loaded = 0;
+    plates.forEach(p => {
+      if (p.el.complete) loaded++;
+      else p.el.addEventListener('load', () => { loaded++; if (loaded === plates.length) init(); }, { once:true });
+    });
+
+    init();
+    requestAnimationFrame(tick);
+
+    window.addEventListener('resize', init);
+  })();
+</script>
+
+</body>
+</html>

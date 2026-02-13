@@ -218,14 +218,6 @@
       transform: translateX(0) translateY(0);
     }
 
-    @media (max-width: 700px){
-      .section-card.reveal.from-left,
-      .section-card.reveal.from-right{
-        transform: translateY(40px);
-      }
-    }
-
-
     /* Ako želiš da prva (home) bude odmah vidljiva */
     .section-card.no-anim{
       opacity: 1 !important;
@@ -616,6 +608,7 @@
       .modal-body{ grid-template-columns: 1fr; }
       .dropdown{ width: 220px; }
       .about-center h2{ font-size: 38px; }
+      .section-card.reveal.from-left{ transform: translateX(-60px); }
     }
   </style>
 </head>
@@ -1154,7 +1147,7 @@ tabButtons.forEach(btn => {
         io.unobserve(entry.target); // animira samo prvi put
       }
     });
-  }, { threshold: 0.18 });
+  }, { threshold: 0.08, rootMargin: "0px 0px -10% 0px" });
 
   // 4) promatraj samo reveal kartice
   cards.forEach((card, idx) => {

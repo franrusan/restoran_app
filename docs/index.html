@@ -203,6 +203,43 @@
       scroll-margin-top: calc(var(--headerH) + 18px);
     }
 
+    /* samo kartice s klasom .reveal animiraju */
+    .section-card.reveal{
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 1000ms ease, transform 1000ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .section-card.reveal.from-left{ transform: translateX(-200px); }
+    .section-card.reveal.from-right{ transform: translateX(200px); }
+
+    .section-card.reveal.in-view{
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+
+    /* Ako želiš da prva (home) bude odmah vidljiva */
+    .section-card.no-anim{
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    /* TAB animacije - samo X smjer */
+    .tab-content{
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 500ms ease, transform 500ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .hidden{ display: none !important; }
+
+    .tab-content.enter-left{ opacity: 0; transform: translateX(-100px); }
+    .tab-content.enter-right{ opacity: 0; transform: translateX(100px); }
+
+    .tab-content.exit-left{ opacity: 0; transform: translateX(-100px); }
+    .tab-content.exit-right{ opacity: 0; transform: translateX(100px); }
+
     /* subtle ambient in each card */
     .section-card::before{
       content:"";
@@ -337,6 +374,7 @@
       background: rgba(0,0,0,0.18);
       border-radius: 18px;
       padding: 16px;
+      overflow: hidden;
     }
     .menu-cat-title{
       font-family:"Playfair Display", serif;
@@ -650,7 +688,7 @@
                 <button class="tab-btn" data-tab="drinks" type="button">Drinks</button>
               </div>
 
-              <div id="tab-food">
+              <div id="tab-food" class="tab-content">
   <!-- OVDJE OSTAVI POSTOJEĆI FOOD MENI (Juhe / Glavna jela / Deserti) -->
                  <div class="menu-cat-title">Juhe</div>
               <div class="item" data-type="dish" data-id="soup1">
@@ -701,7 +739,7 @@
               </div>
             </div>
 
-            <div id="tab-drinks" class="hidden">
+            <div id="tab-drinks" class="tab-content hidden">
               <!-- DRINKS ponuda -->
               <div class="menu-cat-title">Kokteli</div>
 
@@ -1024,22 +1062,100 @@ document.addEventListener('click', (e) => {
       }
     });
 
-        // ===== Menu tabs: Food / Drinks =====
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabFood = document.getElementById('tab-food');
-    const tabDrinks = document.getElementById('tab-drinks');
+    // ===== Tabs animacija (Food/Drinks) =====
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabFood = document.getElementById('tab-food');
+const tabDrinks = document.getElementById('tab-drinks');
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const which = btn.dataset.tab;
+let current = 'food';
+let busy = false;
 
-        tabButtons.forEach(b => b.classList.toggle('is-active', b === btn));
+function cleanClasses(el){
+  el.classList.remove('enter-left','enter-right','exit-left','exit-right');
+}
 
-        const showFood = which === 'food';
-        tabFood.classList.toggle('hidden', !showFood);
-        tabDrinks.classList.toggle('hidden', showFood);
-      });
+function switchTab(target){
+  if (busy || target === current) return;
+  busy = true;
+
+  const fromEl = current === 'food' ? tabFood : tabDrinks;
+  const toEl   = target === 'food' ? tabFood : tabDrinks;
+
+  // aktivni gumb
+  tabButtons.forEach(b => b.classList.toggle('is-active', b.dataset.tab === target));
+
+// Smjer "listanja":
+// Food -> Drinks: food izlazi lijevo, drinks ulazi s desna
+// Drinks -> Food: drinks izlazi desno, food ulazi s lijeva
+const goingToDrinks = target === 'drinks';
+const exitClass  = goingToDrinks ? 'exit-left'   : 'exit-right';
+const enterClass = goingToDrinks ? 'enter-right' : 'enter-left';
+
+// EXIT
+cleanClasses(fromEl);
+fromEl.classList.add(exitClass);
+
+setTimeout(() => {
+  // sakrij stari
+  fromEl.classList.add('hidden');
+  cleanClasses(fromEl);
+
+  // pokaži novi (ENTER)
+  toEl.classList.remove('hidden');
+  cleanClasses(toEl);
+  toEl.classList.add(enterClass);
+
+  // force reflow da animacija krene
+  void toEl.offsetWidth;
+
+  // makni enter klasu -> ide u normalno stanje
+  requestAnimationFrame(() => {
+    cleanClasses(toEl);
+    busy = false;
+    current = target;
+  });
+
+}, 500);
+}
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+
+
+
+  // ===== Entrance animacija kartica (fade + smjer) =====
+  const cards = document.querySelectorAll('.section-card');
+
+  // 1) prva kartica odmah vidljiva (bez animacije)
+  if (cards[0]) {
+    cards[0].classList.remove('reveal', 'from-left', 'from-right');
+    cards[0].classList.add('in-view');
+  }
+
+  cards.forEach((card, idx) => {
+    if (idx === 0) return;
+    card.classList.add('reveal', 'from-left');
+  });
+
+  // 3) observer
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target); // animira samo prvi put
+      }
     });
+  }, { threshold: 0.18 });
+
+  // 4) promatraj samo reveal kartice
+  cards.forEach((card, idx) => {
+    if (idx === 0) return;
+    io.observe(card);
+  });
+
+
 
   </script>
 

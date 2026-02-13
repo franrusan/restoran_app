@@ -206,16 +206,23 @@
     /* samo kartice s klasom .reveal animiraju */
     .section-card.reveal{
       opacity: 0;
-      transform: translateY(18px);
+      transform: translateY(40px);
       transition: opacity 1000ms ease, transform 1000ms cubic-bezier(.2,.8,.2,1);
     }
 
-    .section-card.reveal.from-left{ transform: translateX(-200px); }
-    .section-card.reveal.from-right{ transform: translateX(200px); }
+    .section-card.reveal.from-left{ transform: translateX(-100px); }
+    .section-card.reveal.from-right{ transform: translateX(100px); }
 
     .section-card.reveal.in-view{
       opacity: 1;
       transform: translateX(0) translateY(0);
+    }
+
+    @media (max-width: 700px){
+      .section-card.reveal.from-left,
+      .section-card.reveal.from-right{
+        transform: translateY(40px);
+      }
     }
 
 

@@ -95,31 +95,6 @@ const drinkDescBox = document.getElementById('drinkDescBox');
 const drinkDesc = document.getElementById('drinkDesc');
 
 
-function openDish(key){
-    const d = dishes[key];
-    if (!d) return;
-
-    dishTitle.textContent = d.title || "Detalji";
-    dishPhoto.src = d.photo || "assets/cocktail.jpeg";
-
-    // ako nema ingredients/steps, sakrij sekcije
-    const ing = Array.isArray(d.ingredients) ? d.ingredients : [];
-    const stp = Array.isArray(d.steps) ? d.steps : [];
-
-    dishIngredients.innerHTML = ing.map(x => `<li>${x}</li>`).join('');
-    dishSteps.innerHTML = stp.map(x => `<li>${x}</li>`).join('');
-
-    // sakrij box ako je prazan
-    const ingBox = dishIngredients.closest('.box');
-    const stpBox = dishSteps.closest('.box');
-
-    if (ingBox) ingBox.style.display = ing.length ? '' : 'none';
-    if (stpBox) stpBox.style.display = stp.length ? '' : 'none';
-
-    dishModal.classList.add('open');
-    dishModal.setAttribute('aria-hidden', 'false');
-}
-
 function closeDishModal(){
     dishModal.classList.remove('open');
     dishModal.setAttribute('aria-hidden', 'true');

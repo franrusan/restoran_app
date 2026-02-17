@@ -1222,15 +1222,6 @@ footer{
 
 
   .item p{ font-size: 13px; line-height: 1.35; }
-
-  /* donji gumb da ne bude zalijepljen uz zadnji item */
-  .page-nav{
-    display:flex;
-    justify-content:center;
-    margin-top: 18px;
-    padding-top: 10px;
-  }
-
   /* ===== ITEM PAGE (item.html) ===== */
   /* 2 kolone -> 1 kolona (ako imaš grid wrapper, ovo pokriva većinu slučajeva) */
   .modal-body,
@@ -1261,5 +1252,22 @@ footer{
     gap: 14px !important;
   }
 }
+
+@media (max-width: 520px){
+  /* item page – gumb nazad ne smije prekriti tekst */
+  .item-page .page-nav{
+    position: static !important;
+    transform: none !important;
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* malo više “papira” dole da diše */
+  .item-page .paper{
+    padding-bottom: 24px;
+  }
+}
+
 
 

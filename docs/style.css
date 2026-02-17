@@ -1086,6 +1086,18 @@ footer{
   box-shadow: 0 0 0 3px rgba(242,201,76,0.35);
 }
 
+/* MENU page – papir uvijek centriran */
+.menu-page .menu-book,
+.menu-page .book{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.menu-page .paper{
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){
@@ -1169,7 +1181,7 @@ footer{
   .menu-cat-title{ font-size: 28px; margin: 18px 0 10px; }
 
   /* item layout: manja slika + bolji tekst */
-  .item{ gap: 12px; align-items: center; }
+  .item{ min-width: 0;}
   .item-img{
     width: 56px;
     height: 56px;
@@ -1179,28 +1191,35 @@ footer{
   .item-img img{ width:100%; height:100%; object-fit: cover; }
 
   /* STABILNA CIJENA (uvijek desno) */
-  .item-row{
-    display: grid;
-    grid-template-columns: auto 1fr auto; /* naziv | dots | cijena */
-    align-items: baseline;
-    column-gap: 10px;
-  }
+  /* stabilna cijena + bez preljevanja */
+.item{
+  min-width: 0; /* bitno za flex/grid overflow */
+}
 
-  .item-row strong{
-    font-size: 16px;
-    line-height: 1.15;
-  }
+.item-body{
+  min-width: 0;
+}
 
-  .item-row .dots{
-    border-bottom: 2px dotted rgba(0,0,0,0.25);
-    transform: translateY(-2px);
-  }
+.item-row{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
 
-  .item-row .price{
-    justify-self: end;
-    white-space: nowrap;
-    font-size: 16px;
-  }
+.item-row strong{
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* da cijena ostane uvijek poravnata */
+}
+
+.item-row .price{
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 
   .item p{ font-size: 13px; line-height: 1.35; }
 

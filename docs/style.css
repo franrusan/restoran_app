@@ -1104,12 +1104,6 @@ footer{
   .about-center h2{ font-size: 38px; }
 }
 
-/* Header CTA responsively */
-@media (max-width: 420px){
-  .btn-primary.header-cta{
-    display: none;
-  }
-}
 
 @media (max-width: 520px){
 
@@ -1130,16 +1124,16 @@ footer{
     pointer-events: none;
   }
 
-  /* smanji gumb u headeru */
-  .btn-primary.header-cta{
-    height: 38px;
-    padding: 8px 12px;
-    font-size: 0;            /* sakrij tekst (pokazat ćemo ikonu) */
-    min-width: 44px;
+  .btn-104.header-cta{
+    font-size: 0;            /* sakrije tekst MENU/HOME */
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
   }
 
-  /* ikona u header gumbu (koristi data-icon iz HTML-a) */
-  .btn-primary.header-cta::before{
+  .btn-104.header-cta::before{
     content: attr(data-icon);
     font-size: 18px;
     line-height: 1;

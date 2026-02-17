@@ -579,13 +579,16 @@ footer{
 /* CTA: umjesto translate, radi scale-pop na scroll */
 .section-card.cta-strip.reveal{
   opacity: 0;
-  transform: scale(5);
+  transform: scale(2);
+  transform-origin: center;
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(.2,.9,.2,1);
+  will-change: transform, opacity;
 }
-
 .section-card.cta-strip.reveal.in-view{
   opacity: 1;
   transform: scale(1);
 }
+
 
 /* ===== Book Menu ===== */
 .menu-book{

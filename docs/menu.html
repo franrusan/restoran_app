@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu</title>
+
+  <!-- Fonts (zadrži ako koristiš iste na indexu) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="menu-page">
+
+  <!-- Background plates (ako ih koristiš na indexu i želiš i ovdje) -->
+  <div class="bg-layer" aria-hidden="true">
+    <!-- zamijeni src putanjama koje koristiš u projektu -->
+    <img class="plate p1" src="assets/plate1.png" alt="">
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div></div>
+
+      <a class="brand" href="index.html">Moxieph</a>
+
+      <div class="menu-wrap">
+        <a class="btn-104" href="index.html">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- MENU -->
+<!-- BOOK MENU (2 pages: Food / Drinks) -->
+<div class="menu-book" aria-label="Menu book">
+
+  <!-- state (CSS-only) -->
+  <input class="book-state" type="radio" name="page" id="page-food" checked>
+  <input class="book-state" type="radio" name="page" id="page-drinks">
+
+  <!-- controls -->
+  <div class="book-controls">
+    <label class="btn-104" for="page-food">Food</label>
+    <label class="btn-104" for="page-drinks">Drinks</label>
+  </div>
+
+  <div class="book">
+
+    <!-- PAGE 1: FOOD -->
+    <section class="paper front">
+      <h3 class="paper-title">Food</h3>
+
+      <div class="menu-cat">
+        <div class="menu-cat-title">Juhe</div>
+
+        <div class="item" data-key="krem-juha-od-povrca">
+          <div class="item-img"><img src="assets/juha-povrce.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Krem juha od povrća</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Lagano, sezonski, citrusni završetak.</p>
+          </div>
+        </div>
+
+        <div class="item" data-key="juha-od-bundeve">
+          <div class="item-img"><img src="assets/juha-bundeva.jpeg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Juha od bundeve</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Kremasta tekstura, tostirane sjemenke.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-cat">
+        <div class="menu-cat-title">Glavna jela</div>
+
+        <div class="item" data-key="sporo-peceno-meso">
+          <div class="item-img"><img src="assets/pulled-pork.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Sporo pečeno meso</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Umak od temeljca, sezonski prilog.</p>
+          </div>
+        </div>
+
+        <div class="item" data-key="riblji-file">
+          <div class="item-img"><img src="assets/riba.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Riblji file</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Maslac-limun, povrće na žaru.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-cat">
+        <div class="menu-cat-title">Deserti</div>
+
+        <div class="item" data-key="voce-i-krema">
+          <div class="item-img"><img src="assets/kreme_vocna.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Voće i krema</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Lagano, svježe, hrskavi element.</p>
+          </div>
+        </div>
+
+        <div class="item" data-key="cokoladni-mousse">
+          <div class="item-img"><img src="assets/coko-mus.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Čokoladni mousse</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Dubok okus, malo soli, crumble.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <label class="btn-104" for="page-drinks">
+            <span>🍷</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- PAGE 2: DRINKS -->
+    <section class="paper back">
+      <h3 class="paper-title">Drinks</h3>
+
+      <div class="menu-cat">
+        <div class="menu-cat-title">Kokteli</div>
+
+        <div class="item" data-key="negroni">
+          <div class="item-img"><img src="assets/smoked-negroni.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Negroni</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Gin, vermut, Campari — balansirano gorko.</p>
+          </div>
+        </div>
+
+        <div class="item" data-key="whiskey-sour">
+          <div class="item-img"><img src="assets/whiskey-sour.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Whiskey Sour</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Whiskey, limun, šećer — svježe i kremasto.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-cat">
+        <div class="menu-cat-title">Vina</div>
+
+        <div class="item" data-key="chardonnay-015">
+          <div class="item-img"><img src="assets/chardonnay.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Chardonnay (0.15)</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Suho, voćno, lagani hrast.</p>
+          </div>
+        </div>
+
+        <div class="item" data-key="plavac-mali-015">
+          <div class="item-img"><img src="assets/vino.jpg" alt=""></div>
+          <div class="item-body">
+            <div class="item-row">
+                <strong>Plavac Mali (0.15)</strong>
+                <span class="price">10€</span>
+            </div>
+            <p>Puno tijelo, tamno voće, začini.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <label class="btn-104" for="page-food">
+            <span>🍽️</span>
+        </label>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+  </main>
+  <!-- JS -->
+  <script src="menu.js"></script>
+
+
+</body>
+</html>

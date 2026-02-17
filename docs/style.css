@@ -60,31 +60,18 @@ button{ font:inherit; }
 }
 
 .plate.p1{
-  top: 120px;
-  right: -160px;
+  top: 40px;
+  right: -100px;
   width: min(640px, 56vw);
   rotate: -12deg;
   opacity: 0.2;
-  animation: float1 40s ease-in-out infinite;
-}
-.plate.p2{
-  bottom: 120px;
-  left: 10px;
-  width: min(640px, 56vw);
-  rotate: 10deg;
-  opacity: 0.2;
-  animation: float2 40s ease-in-out infinite;
+  animation: float1 50s ease-in-out infinite;
 }
 @keyframes float1{
   0%{ transform: translate(0,0); }
   30%{ transform: translate(-100px, 100px); }
-  70%{ transform: translate(-400px,-200px); }
-  100%{ transform: translate(0,0); }
-}
-@keyframes float2{
-  0%{ transform: translate(0,0); }
-  30%{ transform: translate(150px, 150px); }
-  70%{ transform: translate(200px,200px); }
+  60%{ transform: translate(-800px,-200px); }
+  80%{ transform: translate( 40px, -300px); }
   100%{ transform: translate(0,0); }
 }
 
@@ -131,16 +118,6 @@ button{ font:inherit; }
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.btn-primary.header-cta{
-  padding: 10px 14px;
-  height: 44px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
 }
 
 .hamburger{
@@ -454,51 +431,9 @@ h1,h2{ font-family:"Playfair Display", serif; margin:0; }
 .icon svg{ width: 18px; height: 18px; }
 
 .reserve-cta{ display:flex; justify-content:center; margin-top: 22px; }
-.btn-primary{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.25);
-  padding: 12px 18px;
-  font-size: 14px;
-  color: var(--accentText);
-  background: var(--accent);
-  font-weight: 500;
-  cursor:pointer;
-  box-shadow: 0 18px 60px rgba(242,201,76,0.20);
-  transition: transform .15s ease, filter .15s ease;
-}
-.btn-primary:hover{ transform: translateY(-1px); filter: brightness(1.03); }
-
 /* =========================
    Tabs (food/drinks)
    ========================= */
-.tabs{
-  display:flex;
-  justify-content:center;
-  width: 100%;
-  gap:20px;
-  padding: 6px;
-  margin: 6px 6px 18px;
-}
-.tab-btn{
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.80);
-  padding: 10px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background .15s ease, transform .15s ease, color .15s ease;
-}
-.tab-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.06); }
-.tab-btn.is-active{
-  background: var(--accent);
-  color: var(--accentText);
-  border-color: rgba(0,0,0,0.25);
-}
-
 /* =========================
    Modal (dish details)
    ========================= */
@@ -599,6 +534,422 @@ footer{
   gap: 12px;
   align-items:center;
   flex-wrap: wrap;
+}
+
+/* CTA: bez bloka, samo centriran tekst + gumb */
+.cta-strip{
+  padding: 80px 0;              /* razmak od ostalih sekcija */
+}
+
+
+.cta-strip .container{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  text-align: center;
+}
+
+/* opcionalno: malo ljepši razmaci */
+.cta-strip h2{ margin: 0 0 10px; }
+.cta-strip p{ margin: 0 0 16px; opacity: .9; }
+
+/* CTA: izgleda kao "bez bloka" ali koristi reveal/in-view kao ostale sekcije */
+.section-card.cta-strip{
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.section-card.cta-strip::before{
+  content: none !important;
+}
+
+.section-card.cta-strip .section-inner{
+  padding: 56px 0;
+}
+
+.section-card.cta-strip .container{
+  text-align: center;
+}
+
+/* CTA: umjesto translate, radi scale-pop na scroll */
+.section-card.cta-strip.reveal{
+  opacity: 0;
+  transform: scale(5);
+}
+
+.section-card.cta-strip.reveal.in-view{
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ===== Book Menu ===== */
+.menu-book{
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+
+.book-state{ display:none; }
+
+.book-controls{
+  display:flex;
+  justify-content:center;
+  gap: 10px;
+  margin: 6px 0 18px;
+}
+
+/* 3D book */
+.book{
+  position: relative;
+  width: 100%;
+  min-height: 920px;
+  perspective: 1200px;
+}
+
+/* pages */
+.paper{
+  position: absolute;
+  inset: 0;
+  padding: 20px 18px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+
+  /* paper look */
+  background:
+    radial-gradient(900px 600px at 30% 10%, rgba(255,255,255,0.06), transparent 55%),
+    rgba(0,0,0,0.22);
+
+  box-shadow: 0 30px 120px rgba(0,0,0,0.55);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow: hidden;
+  
+}
+
+/* title */
+.paper-title{
+  font-family:"Playfair Display", serif;
+  margin: 4px 6px 14px;
+  font-size: 34px;
+  text-align:center;
+}
+
+/* default positions */
+.front{ transform: rotateY(0deg); }
+.back{
+  transform: rotateY(180deg);
+}
+
+/* flip */
+#page-drinks:checked ~ .book .front{
+  transform: rotateY(-180deg);
+  transition: transform 1000ms cubic-bezier(.2,.8,.2,1), opacity 250ms ease;
+  opacity: 0.25;
+}
+#page-drinks:checked ~ .book .back{
+  transform: rotateY(0deg);
+  transition: transform 1000ms cubic-bezier(.2,.8,.2,1), opacity 250ms ease;
+  opacity: 1;
+}
+
+/* when food selected */
+#page-food:checked ~ .book .front{
+  transition: transform 1000ms cubic-bezier(.2,.8,.2,1), opacity 250ms ease;
+  opacity: 1;
+}
+#page-food:checked ~ .book .back{
+  transition: transform 1000ms cubic-bezier(.2,.8,.2,1), opacity 250ms ease;
+  opacity: 0.25;
+}
+
+/* page nav */
+.page-nav{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 80px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center; /* centar */
+}
+
+.page-next {
+  margin-left: 0;
+  cursor:pointer;
+  user-select:none;
+  color: rgb(14, 13, 13);
+  opacity: .9;
+}
+.page-prev{
+  cursor: pointer;
+  user-select:none;
+  color: rgb(14, 13, 13);
+  opacity: .9;
+}
+.page-next:hover, .page-prev:hover{ opacity: 1; }
+
+/* ===== Real parchment paper (no grid) ===== */
+:root{
+  --paper: #f4ecd8;
+  --paper2:#eadfbe;
+  --paper-ink: rgba(22,18,12,.92);
+  --paper-muted: rgba(22,18,12,.62);
+  --paper-line: rgba(0,0,0,.14);
+}
+
+.paper{
+  color: var(--paper-ink);
+  border: 1px solid rgba(0,0,0,.18);
+  border-radius: 18px;
+
+  /* no repeating lines = no grid */
+  background:
+    /* soft center light */
+    radial-gradient(1000px 700px at 50% 18%, rgba(255,255,255,.78), transparent 62%),
+    /* subtle stains */
+    radial-gradient(420px 280px at 18% 28%, rgba(120,78,35,.12), transparent 60%),
+    radial-gradient(520px 340px at 78% 36%, rgba(120,78,35,.10), transparent 62%),
+    radial-gradient(520px 380px at 55% 78%, rgba(90,60,30,.10), transparent 65%),
+    /* base paper */
+    linear-gradient(180deg, var(--paper), var(--paper2));
+
+  box-shadow:
+    0 28px 110px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.55);
+
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+/* dirty edges / vignette (like your example) */
+.paper::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: 18px;
+  pointer-events:none;
+  background:
+    radial-gradient(900px 420px at 50% -8%, rgba(0,0,0,.16), transparent 58%),
+    radial-gradient(900px 420px at 50% 108%, rgba(0,0,0,.18), transparent 58%),
+    radial-gradient(420px 900px at -8% 50%, rgba(0,0,0,.14), transparent 58%),
+    radial-gradient(420px 900px at 108% 50%, rgba(0,0,0,.14), transparent 58%);
+  opacity: .55;
+  mix-blend-mode: multiply;
+}
+
+/* spine shadow (subtle) */
+.paper.front::before{
+  content:"";
+  position:absolute; top:0; bottom:0; left:0;
+  width: 48px;
+  border-radius: 18px 0 0 18px;
+  pointer-events:none;
+  background: linear-gradient(90deg, rgba(0,0,0,.20), transparent 75%);
+  opacity: .45;
+}
+.paper.back::before{
+  content:"";
+  position:absolute; top:0; bottom:0; right:0;
+  width: 48px;
+  border-radius: 0 18px 18px 0;
+  pointer-events:none;
+  background: linear-gradient(270deg, rgba(0,0,0,.20), transparent 75%);
+  opacity: .45;
+}
+
+/* typography on paper */
+.paper .paper-title,
+.paper .menu-cat-title{
+  color: rgba(22,18,12,.92);
+}
+
+.paper .item{
+  background: rgba(255,255,255,.38);
+  border: 1px solid rgba(0,0,0,.10);
+}
+.paper .item p{ color: var(--paper-muted); }
+.paper .item:hover{ background: rgba(255,255,255,.50); }
+
+/* subtle scrollbar */
+.paper::-webkit-scrollbar{ width: 8px; }
+.paper::-webkit-scrollbar-thumb{ background: rgba(0,0,0,.20); border-radius: 999px; }
+.paper::-webkit-scrollbar-track{ background: rgba(0,0,0,.06); }
+
+/* ===== Printed menu list style (no item cards) ===== */
+.paper .menu-panel{ 
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.paper .item{
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 14px;
+  align-items: center;
+
+  padding: 14px 6px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* thin “printed” divider lines like a menu */
+.paper .item + .item{
+  border-top: 1px solid rgba(0,0,0,0.14);
+}
+
+/* image like a small “stamp/photo” */
+.paper .item-img{
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  overflow: hidden;
+
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.35);
+}
+
+.paper .item-img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* text styling (print vibe) */
+.paper .item-body strong{
+  display:block;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: rgba(22,18,12,.92);
+}
+
+.paper .item-body p{
+  margin: 4px 0 0;
+  color: rgba(22,18,12,.62);
+  line-height: 1.35;
+  font-size: 13.5px;
+}
+
+/* category titles look more like printed sections */
+.paper .menu-cat-title{
+  margin: 18px 6px 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.16);
+  font-size: 26px;
+}
+
+/* ===== Leader line + price ===== */
+.paper .item-body{ width: 95%; }
+
+/* ===== Title + leader line + price on same row ===== */
+.paper .item-row{
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.paper .item-row strong{
+  white-space: nowrap;
+}
+
+/* line grows to fill the space */
+.paper .item-row::before{
+  content: "";
+  flex: 1;
+  border-bottom: 1px dotted rgba(0,0,0,0.28);
+  transform: translateY(-2px);
+  order: 2;
+}
+
+/* put price at the end */
+.paper .item-row .price{
+  order: 3;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: rgba(22,18,12,.82);
+}
+
+/* ensure strong stays first */
+.paper .item-row strong{ order: 1; }
+
+
+.btn-104 {
+    position: relative;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #000;
+    background-color: #f2c94c;
+    border: none;
+    border-radius: 50px;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    display: inline-flex;
+}
+
+.btn-104:hover {
+    transform: scale(1.05);
+    color: #000;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-104:active {
+    transform: scale(0.9);
+}
+
+.btn-104::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #947f09, #f2c94c);
+    transition: all 0.4s ease-in-out;
+    z-index: -1;
+    border-radius: 50px;
+}
+
+.btn-104:hover::before {
+    left: 0;
+}
+
+/*** disabled style ***/
+.btn-104:disabled {
+    pointer-events: none;
+    opacity: .65;
+    color: #7e7e7e;
+    background: #dcdcdc;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){
+  #page-drinks:checked ~ .book .front,
+  #page-drinks:checked ~ .book .back,
+  #page-food:checked ~ .book .front,
+  #page-food:checked ~ .book .back{
+    transition: none;
+  }
 }
 
 @media (max-width: 980px){

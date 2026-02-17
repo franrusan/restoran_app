@@ -990,6 +990,103 @@ footer{
   line-height: 1.45;
 }
 
+/* ===== Social icons (no Font Awesome) ===== */
+.social{
+  display:flex;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.social li{
+  position: relative;
+}
+
+/* Tooltip */
+.social li::after{
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: -60px;
+  transform: translate(-50%, -100%) translateY(8px);
+  padding: 5px 10px;
+  border-radius: 10px;
+
+  font-size: 12px;
+  color: #fff;
+  background: var(--bg, #111);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .25s ease, visibility .2s ease;
+}
+
+.social li:hover::after,
+.social li:focus-within::after{
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -100%) translateY(0);
+}
+
+/* Button */
+.social a{
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.22);
+
+  color: rgba(255,255,255,0.88);
+  text-decoration: none;
+  overflow: hidden;
+  position: relative;
+
+  transition: transform .15s ease, color .25s ease, border-color .15s ease;
+}
+
+/* SVG inherits color */
+.social-ico{
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  position: relative;
+  z-index: 1;
+}
+
+/* Color slide up */
+.social a::after{
+  content: "";
+  position: absolute;
+  inset: 100% 0 0;          /* start hidden at bottom */
+  background: var(--bg, #111);
+  transition: inset .25s ease;
+}
+
+/* Hover / focus */
+.social a:hover,
+.social a:focus-visible{
+  transform: translateY(-3px);
+  color: #fff;
+  border-color: rgba(255,255,255,0.28);
+}
+
+.social a:hover::after,
+.social a:focus-visible::after{
+  inset-block-start: 0;     /* fill */
+}
+
+/* Nice focus ring */
+.social a:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(242,201,76,0.35);
+}
+
+
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){
   #page-drinks:checked ~ .book .front,

@@ -80,4 +80,14 @@ document.addEventListener("click", (e) => {
 
   window.location.href = `item.html?id=${encodeURIComponent(key)}&from=${from}`;
 });
+(function(){
+  const params = new URLSearchParams(location.search);
+  const tab = params.get("tab");
+  if (!tab) return;
 
+  const food = document.getElementById("page-food");
+  const drinks = document.getElementById("page-drinks");
+
+  if (tab === "drinks" && drinks) drinks.checked = true;
+  if (tab === "food" && food) food.checked = true;
+})();

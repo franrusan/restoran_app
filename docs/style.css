@@ -1131,21 +1131,21 @@ footer{
     padding: 0;
     display: inline-grid;
     place-items: center;
-    font-size: 0;              /* sakrije "Home/Menu" ako je direktno tekst */
+    position: relative;   /* bitno za absolute centriranje */
   }
 
-  /* ako u HTML-u ima <span>Menu</span> — sakrij ga */
-  .btn-104.header-cta span{
-    display: none !important;
-  }
+  .btn-104.header-cta span{ display:none !important; }
 
-  /* ikonu stavi na ::after (NE ::before jer ::before koristi btn-104 za background animaciju) */
   .btn-104.header-cta::after{
     content: attr(data-icon);
+    position: absolute;
+    inset: 0;             /* puni cijeli gumb */
+    display: grid;
+    place-items: center;  /* savršeni centar */
     font-size: 18px;
     line-height: 1;
-    position: relative;
     z-index: 2;
+    pointer-events: none;
   }
   /* ===== CTA "check out our menu" ===== */
   /* makni fullscreen/velike razmake koji stvaraju prazninu */

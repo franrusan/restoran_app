@@ -1124,21 +1124,29 @@ footer{
     pointer-events: none;
   }
 
+  /* CTA u headeru = samo ikona na mobitelu */
   .btn-104.header-cta{
-    font-size: 0;            /* sakrije tekst MENU/HOME */
     width: 44px;
     height: 44px;
     padding: 0;
     display: inline-grid;
     place-items: center;
+    font-size: 0;              /* sakrije "Home/Menu" ako je direktno tekst */
   }
 
-  .btn-104.header-cta::before{
+  /* ako u HTML-u ima <span>Menu</span> — sakrij ga */
+  .btn-104.header-cta span{
+    display: none !important;
+  }
+
+  /* ikonu stavi na ::after (NE ::before jer ::before koristi btn-104 za background animaciju) */
+  .btn-104.header-cta::after{
     content: attr(data-icon);
     font-size: 18px;
     line-height: 1;
+    position: relative;
+    z-index: 2;
   }
-
   /* ===== CTA "check out our menu" ===== */
   /* makni fullscreen/velike razmake koji stvaraju prazninu */
   .section-card.cta-strip .section-inner{

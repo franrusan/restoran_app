@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stavka</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="menu-page">
+
+  <!-- isti background kao do sada -->
+  <div class="bg-layer" aria-hidden="true">
+    <img class="plate p1" src="assets/plate1.png" alt="">
+  </div>
+
+  <!-- isti header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div></div>
+      <a class="brand" href="index.html">Moxieph</a>
+      <div class="menu-wrap">
+        <a class="btn-104" href="menu.html">Menu</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- zadrži section-card wrapper kao i prije -->
+    <section class="section-card item-page">
+      <div class="section-inner">
+        <div class="container">
+
+          <!-- “paper” izgled kao na menu book -->
+          <section class="paper" style="position:relative;">
+            <h3 class="paper-title" id="itemTitle">Naziv stavke</h3>
+
+            <div class="item-body">
+              <div class="item-row" style="padding:0 6px;">
+                <strong>Cijena</strong>
+                <span class="price" id="itemPrice">10€</span>
+              </div>
+              <p id="itemDesc" style="padding:0 6px; margin-top:10px;">
+                Opis stavke...
+              </p>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 0.9fr 1.1fr; gap: 18px; margin-top: 18px;">
+              <div class="photo" style="min-height: 320px;">
+                <img id="itemPhoto" src="" alt="">
+              </div>
+
+              <div class="boxes" id="dishOnly">
+                <div class="box">
+                  <h4>Sastojci</h4>
+                  <ul id="itemIngredients"></ul>
+                </div>
+
+                <div class="box">
+                  <h4>Priprema</h4>
+                  <ol id="itemSteps"></ol>
+                </div>
+              </div>
+            </div>
+
+            <!-- dolje centriran “natrag” gumb, isti stil kao tvoji -->
+            <div class="page-nav" style="position:absolute; left:0; right:0; bottom:22px; display:flex; justify-content:center;">
+              <a class="btn-104" id="backToMenu" href="menu.html"><span>←</span></a>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <script src="menu-data.js"></script>
+  <script src="item.js" defer></script>
+</body>
+</html>

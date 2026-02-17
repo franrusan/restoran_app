@@ -942,6 +942,54 @@ footer{
     text-shadow: none;
 }
 
+/* Item page: bez okvira kartice oko papira */
+.section-card.item-page{
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.section-card.item-page::before{
+  content: none !important; /* makni ambient blur overlay */
+}
+
+.section-card.item-page .section-inner{
+  padding: 0 !important;
+}
+
+/* Item page: papir viši */
+.section-card.item-page .paper{
+  min-height: 72vh;      /* povecaj/smanji po zelji, npr 78vh */
+  padding-bottom: 90px;  /* mjesta za donji gumb */
+}
+
+.section-card.item-page .paper .box,
+.section-card.item-page .paper .box *{
+  color: #1a1a1a !important;
+  opacity: 1 !important;
+  height: auto;
+}
+
+/* Item page: desni stupac neka ne rasteže boxove po visini slike */
+.section-card.item-page .paper .boxes{
+  align-content: start;   /* grid: sadržaj gore */
+  align-items: start;
+  gap: 14px;              /* normalan razmak između boxova */
+}
+
+/* ujednači default razmake listi na item (paper) stranici */
+.section-card.item-page .paper ul,
+.section-card.item-page .paper ol{
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.section-card.item-page .paper li{
+  margin: 0 0 10px;
+  line-height: 1.45;
+}
+
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){
   #page-drinks:checked ~ .book .front,

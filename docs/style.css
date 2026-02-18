@@ -14,6 +14,21 @@
 
 *{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
+/* globalno: spriječi horizontalni scroll */
+html, body{
+  width: 100%;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after{
+  box-sizing: border-box;
+}
+
+/* ako imaš neki container – neka uvijek ima padding na mobu */
+.container{
+  max-width: 100%;
+}
+
 body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -1325,10 +1340,11 @@ footer{
   border: 1px solid rgba(242,201,76,0.28);
 }
 
+
 /* mobile */
 @media (max-width: 520px){
   .paper-static{
-    width: calc(100vw - 20px);
+    width: calc(100% - 20px);
     padding: 18px 14px;
     padding-bottom: calc(22px + env(safe-area-inset-bottom));
   }

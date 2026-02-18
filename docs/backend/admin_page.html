@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin</title>
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;padding:20px;background:#0b0b0b;color:#eee}
+    .card{max-width:980px;margin:0 auto;padding:18px;border-radius:14px;border:1px solid rgba(242,201,76,.18);
+      background: radial-gradient(900px 600px at 30% 10%, rgba(242,201,76,.10), transparent 55%), rgba(255,255,255,.03);}
+    h1{margin:0 0 10px;font-size:22px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0 14px}
+    input,button{height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.35);color:#eee;padding:0 12px}
+    button{cursor:pointer;border-color:rgba(242,201,76,.35)}
+    table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:12px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;font-size:14px}
+    th{color:rgba(242,201,76,.95);font-weight:600}
+    .muted{opacity:.75}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid rgba(242,201,76,.25);background:rgba(242,201,76,.08)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Admin – Rezervacije</h1>
+    <div class="row">
+      <label class="muted" for="d">Datum:</label>
+      <input id="d" type="date"/>
+      <button id="load">Učitaj</button>
+      <span id="sum" class="pill"></span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Vrijeme</th>
+          <th>Ukupno ljudi</th>
+          <th>Stolovi (veličine grupa)</th>
+        </tr>
+      </thead>
+      <tbody id="tb">
+        <tr><td colspan="3" class="muted">Odaberi datum i klikni “Učitaj”.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<script>
+  const d = document.getElementById('d');
+  const tb = document.getElementById('tb');
+  const sum = document.getElementById('sum');
+
+  const now = new Date();
+  const pad2 = (n)=>String(n).padStart(2,'0');
+  d.value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())}`;
+
+  async function load(){
+    tb.innerHTML = '<tr><td colspan="3" class="muted">Učitavam...</td></tr>';
+    sum.textContent = '';
+
+    const r = await fetch(`/admin/api/summary?date=${encodeURIComponent(d.value)}`, { cache: 'no-store' });
+    const data = await r.json();
+
+    if(!r.ok){
+      tb.innerHTML = '<tr><td colspan="3">Greška.</td></tr>';
+      return;
+    }
+
+    if(!data.rows.length){
+      tb.innerHTML = '<tr><td colspan="3" class="muted">Nema rezervacija za taj datum.</td></tr>';
+      return;
+    }
+
+    sum.textContent = 'Ukupno rezervirano: ' + data.totalPeople;
+
+    tb.innerHTML = data.rows.map(row => `
+      <tr>
+        <td>${row.time}</td>
+        <td>${row.total_people}</td>
+        <td>${row.parties}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('load').addEventListener('click', load);
+</script>
+

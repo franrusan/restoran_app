@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
+const path = require("path");
+
 
 const app = express();
 app.use(cors()); // za dev; kasnije možeš ograničiti origin
@@ -11,7 +13,31 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-const CAPACITY = Number(process.env.CAPACITY_PER_SLOT || 30);
+const MAX_TOTAL = Number(process.env.MAX_TOTAL || 50);
+const MAX_PER_SLOT = Number(process.env.MAX_PER_SLOT || 30);
+const DURATION_MINUTES = Number(process.env.DURATION_MINUTES || 120);
+
+function basicAuth(req, res, next) {
+  const header = req.headers.authorization || "";
+  const [type, token] = header.split(" ");
+
+  if (type !== "Basic" || !token) {
+    res.setHeader("WWW-Authenticate", 'Basic realm="Admin"');
+    return res.status(401).send("Auth required");
+  }
+
+  const decoded = Buffer.from(token, "base64").toString("utf8");
+  const idx = decoded.indexOf(":");
+  const user = decoded.slice(0, idx);
+  const pass = decoded.slice(idx + 1);
+
+  if (user === process.env.ADMIN_USER && pass === process.env.ADMIN_PASS) {
+    return next();
+  }
+
+  res.setHeader("WWW-Authenticate", 'Basic realm="Admin"');
+  return res.status(401).send("Invalid credentials");
+}
 
 // Helper: generiraj slotove 17:00–23:00 svakih 30min
 function generateSlots() {
@@ -33,6 +59,9 @@ function roundUpToNextHalfHour(minutes) {
   return Math.ceil(minutes / 30) * 30;
 }
 
+app.get("/admin_page", basicAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, "admin_page.html"));
+});
 
 // 1) GET available times
 // /availability?date=2026-02-18&people=4
@@ -47,42 +76,101 @@ app.get("/availability", async (req, res) => {
 
     // Zbroji ljude po slotu za taj datum
     const { rows } = await pool.query(
-      `
-      SELECT to_char(res_time, 'HH24:MI') AS t, COALESCE(SUM(people), 0) AS total
-      FROM reservations
-      WHERE res_date = $1
-      GROUP BY t
-      `,
-      [date]
+    `
+    SELECT to_char(res_time, 'HH24:MI') AS t, COALESCE(SUM(people), 0) AS total
+    FROM reservations
+    WHERE res_date = $1
+    GROUP BY t
+    `,
+    [date]
     );
 
-    const bookedMap = new Map(rows.map(r => [r.t, Number(r.total)]));
+    const sumByTime = new Map(rows.map(r => [r.t, Number(r.total)]));
 
-    const available = ALL_SLOTS.filter((t) => {
-      const booked = bookedMap.get(t) || 0;
-      return booked + ppl <= CAPACITY;
+
+    let available = ALL_SLOTS.filter((slot) => {
+    const slotBooked = sumByTime.get(slot) || 0;
+    if (slotBooked + ppl > MAX_PER_SLOT) return false;
+
+    const slotMin = timeToMinutes(slot);
+    const windowStart = slotMin - DURATION_MINUTES;
+
+    // zbroji sve rezervacije koje su startale u (slot-120min, slot]
+    let windowBooked = 0;
+    for (const t of ALL_SLOTS) {
+        const m = timeToMinutes(t);
+        if (m > windowStart && m <= slotMin) {
+        windowBooked += (sumByTime.get(t) || 0);
+        }
+    }
+
+    if (windowBooked + ppl > MAX_TOTAL) return false;
+    return true;
     });
 
+
         // --- sakrij prošla vremena ako je odabrani datum danas ---
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+    // --- sakrij prošla vremena ako je odabrani datum danas ---
+const now = new Date();
+const todayStr =
+  `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
 
-    if (date === todayStr) {
-      const nowMinutes = now.getHours() * 60 + now.getMinutes();
-      const cutoff = roundUpToNextHalfHour(nowMinutes); // npr. 20:10 -> 20:30
+if (date === todayStr) {
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const cutoff = roundUpToNextHalfHour(nowMinutes); // npr. 20:10 -> 20:30
+  available = available.filter(t => timeToMinutes(t) >= cutoff);
+}
 
-      const availableFiltered = available.filter(t => timeToMinutes(t) >= cutoff);
-      return res.json({ date, people: ppl, capacity: CAPACITY, available: availableFiltered });
-    }
-    // ako nije danas
-    res.json({ date, people: ppl, capacity: CAPACITY, available });
+// jedini response
+return res.json({
+  date,
+  people: ppl,
+  maxPerSlot: MAX_PER_SLOT,
+  maxTotal: MAX_TOTAL,
+  durationMinutes: DURATION_MINUTES,
+  available
+});
 
-    res.json({ date, people: ppl, capacity: CAPACITY, available });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
+
+app.get("/admin/api/summary", basicAuth, async (req, res) => {
+  try {
+    const { date } = req.query;
+    if (!date) return res.status(400).json({ error: "date is required" });
+
+const q = await pool.query(
+  `
+  SELECT
+    to_char(res_time, 'HH24:MI') AS time,
+    COALESCE(SUM(people), 0)::int AS total_people,
+    COALESCE(
+      string_agg(
+        (people::text || ' (' || first_name || ' ' || last_name || ')'),
+        ', ' ORDER BY created_at
+      ),
+      ''
+    ) AS parties
+  FROM reservations
+  WHERE res_date = $1
+  GROUP BY time
+  ORDER BY time;
+  `,
+  [date]
+);
+
+
+    const totalPeople = q.rows.reduce((acc, r) => acc + Number(r.total_people), 0);
+    res.json({ date, totalPeople, rows: q.rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 // 2) POST reservation
 app.post("/reservations", async (req, res) => {
@@ -101,23 +189,32 @@ app.post("/reservations", async (req, res) => {
       await client.query("BEGIN");
       await client.query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
-      const sumRes = await client.query(
-        `SELECT COALESCE(SUM(people), 0) AS total
-         FROM reservations
-         WHERE res_date = $1 AND res_time = $2::time`,
+      const slotRes = await client.query(
+        `SELECT COALESCE(SUM(people),0) AS total
+        FROM reservations
+        WHERE res_date = $1 AND res_time = $2::time`,
         [date, time]
-      );
-
-      const total = Number(sumRes.rows[0].total);
-      if (total + ppl > CAPACITY) {
+        );
+        const slotTotal = Number(slotRes.rows[0].total);
+        if (slotTotal + ppl > MAX_PER_SLOT) {
         await client.query("ROLLBACK");
-        return res.status(409).json({
-          error: "Nema mjesta u tom terminu",
-          totalBooked: total,
-          capacity: CAPACITY,
-        });
-      }
+        return res.status(409).json({ error: "Slot je pun (max 30)" });
+        }
 
+      const winRes = await client.query(
+        `SELECT COALESCE(SUM(people),0) AS total
+        FROM reservations
+        WHERE res_date = $1
+            AND res_time > ($2::time - make_interval(mins => $3))
+            AND res_time <= $2::time`,
+        [date, time, DURATION_MINUTES]
+        );
+        const winTotal = Number(winRes.rows[0].total);
+
+        if (winTotal + ppl > MAX_TOTAL) {
+        await client.query("ROLLBACK");
+        return res.status(409).json({ error: "Restoran je pun (max 50 u tom periodu)" });
+        }
       // 2b) Insert
       const ins = await client.query(
         `INSERT INTO reservations (first_name, last_name, email, people, res_date, res_time)

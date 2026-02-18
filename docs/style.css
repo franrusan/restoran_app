@@ -1101,6 +1101,42 @@ footer{
   margin-right: auto;
 }
 
+/* Desktop / PC */
+.item-grid{
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 18px;
+  margin-top: 18px;
+  align-items: start;
+}
+
+/* Mobile: blokovski, centrirano */
+@media (max-width: 520px){
+  .item-grid{
+    grid-template-columns: 1fr;
+    justify-items: center;   /* sve u sredinu */
+    gap: 14px;
+  }
+
+  .item-grid .photo,
+  .item-grid .boxes,
+  .item-grid .box{
+    width: 100%;
+    max-width: 520px;        /* da ne bude preširoko na većim mobitelima */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Centriraj naslove, ali liste ostavi čitljive */
+  .item-grid .box h4{
+    text-align: center;
+  }
+  .item-grid .box ul,
+  .item-grid .box ol{
+    text-align: left;
+  }
+}
+
 
 /* reduce motion */
 @media (prefers-reduced-motion: reduce){

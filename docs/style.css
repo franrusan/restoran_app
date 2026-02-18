@@ -1101,6 +1101,25 @@ footer{
   margin-right: auto;
 }
 
+/* ===== MENU (menu.html): gumb ne smije prekrivati zadnji item ===== */
+.menu-page .menu-book .paper{
+  display: flex;            /* omogući da zadnji element ide na dno */
+  flex-direction: column;
+}
+
+/* page-nav više nije "floating" */
+.menu-page .menu-book .paper .page-nav{
+  position: static;         /* umjesto absolute */
+  margin-top: 18px;         /* razmak od zadnjeg jela */
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+  justify-content: center;
+}
+
+/* opcionalno: ako želiš da gumb bude baš na dnu papira kad je malo sadržaja */
+.menu-page .menu-book .paper .page-nav{
+  margin-top: auto;         /* gura nav na dno */
+}
+
 /* Desktop / PC */
 .item-grid{
   display: grid;

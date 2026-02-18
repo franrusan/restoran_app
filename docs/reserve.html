@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rezervacija</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="reserve-page">
+
+  <div class="bg-layer" aria-hidden="true">
+    <img class="plate p1" src="assets/plate1.png" alt="">
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div></div>
+      <a class="brand" href="index.html">Moxiecph</a>
+      <div class="menu-wrap">
+        <a class="btn-104 header-cta" href="index.html" data-icon="🏠"><span>Home</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="section-card no-anim">
+      <div class="section-inner">
+        <div class="container">
+
+          <section class="paper-static">
+            <h3 class="paper-title">Rezervacija</h3>
+            <p class="paper-subtitle">Ispuni podatke i pošalji upit za rezervaciju.</p>
+
+            <form class="reserve-form" id="reserveForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="firstName">Ime</label>
+                  <input id="firstName" name="firstName" type="text" autocomplete="given-name" required>
+                </div>
+
+                <div class="field">
+                  <label for="lastName">Prezime</label>
+                  <input id="lastName" name="lastName" type="text" autocomplete="family-name" required>
+                </div>
+
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" autocomplete="email" required>
+                </div>
+
+                <div class="field">
+                  <label>Broj ljudi</label>
+
+                  <div class="cselect" data-name="people">
+                    <button type="button" class="cselect-btn" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="cselect-value">Odaberi</span>
+                      <span class="cselect-arrow" aria-hidden="true"></span>
+                    </button>
+
+                    <ul class="cselect-list" role="listbox" tabindex="-1">
+                      <li class="cselect-opt" role="option" data-value="1">1</li>
+                      <li class="cselect-opt" role="option" data-value="2">2</li>
+                      <li class="cselect-opt" role="option" data-value="3">3</li>
+                      <li class="cselect-opt" role="option" data-value="4">4</li>
+                      <li class="cselect-opt" role="option" data-value="5">5</li>
+                      <li class="cselect-opt" role="option" data-value="6">6</li>
+                      <li class="cselect-opt" role="option" data-value="7">7</li>
+                      <li class="cselect-opt" role="option" data-value="8">8</li>
+                      <li class="cselect-opt" role="option" data-value="9">9</li>
+                      <li class="cselect-opt" role="option" data-value="10">10</li>
+                    </ul>
+
+                    <input type="hidden" name="people" id="people" required>
+                  </div>
+                </div>
+
+
+                <div class="field">
+                  <label for="date">Datum</label>
+                  <div class="date-wrap">
+                    <input id="date" name="date" type="date" required>
+                    <span class="date-icon" aria-hidden="true">📅</span>
+                  </div>
+                </div>
+
+
+                <div class="field">
+                  <label>Vrijeme</label>
+
+                  <div class="cselect" data-name="time">
+                    <button type="button" class="cselect-btn" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="cselect-value">Odaberi</span>
+                      <span class="cselect-arrow" aria-hidden="true"></span>
+                    </button>
+
+                        <ul class="cselect-list" role="listbox" tabindex="-1">
+                          <li class="cselect-opt" role="option" data-value="17:00">17:00</li>
+                          <li class="cselect-opt" role="option" data-value="17:30">17:30</li>
+                          <li class="cselect-opt" role="option" data-value="18:00">18:00</li>
+                          <li class="cselect-opt" role="option" data-value="18:30">18:30</li>
+                          <li class="cselect-opt" role="option" data-value="19:00">19:00</li>
+                          <li class="cselect-opt" role="option" data-value="19:30">19:30</li>
+                          <li class="cselect-opt" role="option" data-value="20:00">20:00</li>
+                          <li class="cselect-opt" role="option" data-value="20:30">20:30</li>
+                          <li class="cselect-opt" role="option" data-value="21:00">21:00</li>
+                          <li class="cselect-opt" role="option" data-value="21:30">21:30</li>
+                          <li class="cselect-opt" role="option" data-value="22:00">22:00</li>
+                          <li class="cselect-opt" role="option" data-value="22:30">22:30</li>
+                          <li class="cselect-opt" role="option" data-value="23:00">23:00</li>
+                        </ul>
+
+                    <input type="hidden" name="time" id="time" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn-104" type="submit"><span>Pošalji</span></button>
+              </div>
+
+              <p class="form-note" id="reserveMsg" aria-live="polite"></p>
+            </form>
+
+          </section>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script src="reservation.js"></script>
+
+</body>
+</html>
